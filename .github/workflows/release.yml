@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version (ex: 1.0.0)"
+        required: true
+        default: "1.0.0"
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    runs-on: macos-15
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode 16
+        run: sudo xcode-select -s /Applications/Xcode_16.app
+
+      - name: Extract version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION="${{ github.event.inputs.version }}"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Version: $VERSION"
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Patch project version
+        run: |
+          sed -i '' "s/MARKETING_VERSION: \".*\"/MARKETING_VERSION: \"${{ steps.version.outputs.version }}\"/" project.yml
+          xcodegen generate
+
+      - name: Build & create DMG
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          CI: "true"
+        run: |
+          chmod +x create-dmg.sh
+          ./create-dmg.sh
+
+      - name: Locate DMG
+        id: dmg
+        run: |
+          DMG_PATH=$(ls build/MenuMixer-*.dmg | head -1)
+          echo "path=$DMG_PATH" >> "$GITHUB_OUTPUT"
+          echo "name=$(basename "$DMG_PATH")" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "MenuMixer ${{ steps.version.outputs.version }}"
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          body: |
+            ## Installation
+
+            1. Télécharge `${{ steps.dmg.outputs.name }}` ci-dessous.
+            2. Ouvre le DMG, glisse **Mélangeur de Son** dans `/Applications`.
+            3. Si Gatekeeper bloque (app signée ad-hoc), exécute :
+               ```bash
+               xattr -cr "/Applications/Mélangeur de Son.app"
+               ```
+            4. Lance l'app et autorise l'accès audio.
+
+            Voir le [README](https://github.com/${{ github.repository }}#readme) pour plus de détails.
+          files: ${{ steps.dmg.outputs.path }}
