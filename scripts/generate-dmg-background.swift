@@ -80,29 +80,17 @@ let captionAttrs: [NSAttributedString.Key: Any] = [
     .foregroundColor: NSColor.white.withAlphaComponent(0.75)
 ]
 
-// Instructions en bas
+// Instructions en bas (remontées pour être au-dessus de la status bar Finder)
 let instrAttrs: [NSAttributedString.Key: Any] = [
     .font: NSFont.systemFont(ofSize: 12, weight: .medium),
-    .foregroundColor: NSColor.white.withAlphaComponent(0.55)
+    .foregroundColor: NSColor.white.withAlphaComponent(0.60)
 ]
 let instr = NSAttributedString(
     string: "Glisser MenuMixer vers Applications pour installer",
     attributes: instrAttrs
 )
 let instrSize = instr.size()
-instr.draw(at: NSPoint(x: (width - instrSize.width) / 2, y: 55))
-
-// Petit rappel Terminal (discret)
-let reminderAttrs: [NSAttributedString.Key: Any] = [
-    .font: NSFont.monospacedSystemFont(ofSize: 10, weight: .regular),
-    .foregroundColor: NSColor.white.withAlphaComponent(0.35)
-]
-let reminder = NSAttributedString(
-    string: "Puis dans Terminal :  xattr -cr /Applications/MenuMixer.app && open /Applications/MenuMixer.app",
-    attributes: reminderAttrs
-)
-let reminderSize = reminder.size()
-reminder.draw(at: NSPoint(x: (width - reminderSize.width) / 2, y: 26))
+instr.draw(at: NSPoint(x: (width - instrSize.width) / 2, y: 75))
 
 image.unlockFocus()
 
