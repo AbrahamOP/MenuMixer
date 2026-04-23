@@ -41,6 +41,22 @@ struct AudioProcessInfo: Identifiable, Hashable {
         let runningApp: NSRunningApplication?
     }
 
+    /// Indique si ce AudioObject émet réellement du son vers un output
+    /// (équivalent du "l'app joue actuellement" dans le mélangeur Windows)
+    static func readIsRunningOutput(audioObjectID: AudioObjectID) -> Bool {
+        var value: UInt32 = 0
+        var size = UInt32(MemoryLayout<UInt32>.size)
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyIsRunningOutput,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        let status = AudioObjectGetPropertyData(
+            audioObjectID, &address, 0, nil, &size, &value
+        )
+        return status == noErr && value != 0
+    }
+
     /// Extrait les données brutes d'un AudioObjectID
     static func rawFrom(audioObjectID: AudioObjectID) -> RawProcess? {
         var pid: pid_t = 0

@@ -24,6 +24,15 @@ struct AppVolumeRow: View {
                     .font(.system(size: 13, weight: .medium))
                     .lineLimit(1)
 
+                if state.isPlayingOutput {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 6, height: 6)
+                        .shadow(color: .green.opacity(0.8), radius: 2)
+                        .help("En cours de lecture")
+                        .transition(.scale.combined(with: .opacity))
+                }
+
                 Spacer()
 
                 // Pourcentage
@@ -90,6 +99,8 @@ struct AppVolumeRow: View {
                 .strokeBorder(Color.white.opacity(isHovered ? 0.12 : 0.06), lineWidth: 0.5)
         )
         .padding(.horizontal, 10)
+        .opacity(state.isPlayingOutput ? 1.0 : 0.65)
+        .animation(.easeInOut(duration: 0.25), value: state.isPlayingOutput)
         .onHover { hovering in
             withAnimation(.easeOut(duration: 0.2)) {
                 isHovered = hovering

@@ -75,19 +75,19 @@ jobs:
             2. Double-clique le `.dmg` pour l'ouvrir.
             3. Double-clique sur **`Installer.command`** dans la fenêtre.
                - Au premier lancement, macOS peut demander confirmation : **clic droit** sur `Installer.command` → **Ouvrir**.
-               - Le script copie l'app dans `/Applications`, retire le flag de quarantaine, et lance Mélangeur de Son.
+               - Le script copie l'app dans `/Applications`, retire le flag de quarantaine, et lance MenuMixer.
             4. Autorise la capture audio au premier clic sur l'icône (indispensable).
 
             ## Installation manuelle (alternative)
 
             Glisse l'app dans `/Applications`, puis depuis le Terminal :
             ```bash
-            xattr -cr "/Applications/Mélangeur de Son.app"
+            xattr -cr "/Applications/MenuMixer.app"
             ```
 
             ## Pourquoi ce script ?
 
-            L'app est signée en ad-hoc (gratuit, pas de compte développeur Apple payant). Sans cela, macOS bloque avec le message **« Mélangeur de Son est endommagé »** sur les fichiers téléchargés. Le code source est public et auditable dans ce repo.
+            L'app est signée en ad-hoc (gratuit, pas de compte développeur Apple payant). Sans cela, macOS bloque avec le message **« MenuMixer est endommagé »** sur les fichiers téléchargés. Le code source est public et auditable dans ce repo.
 
             Voir le [README](https://github.com/${{ github.repository }}#readme) pour plus de détails.
           files: ${{ steps.dmg.outputs.path }}

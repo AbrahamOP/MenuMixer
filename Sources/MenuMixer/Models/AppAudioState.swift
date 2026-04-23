@@ -11,6 +11,9 @@ class AppAudioState: ObservableObject, Identifiable {
     @Published var isMuted: Bool = false
     @Published var selectedOutputDeviceID: AudioDeviceID?
     @Published var peakLevel: Float = 0.0
+    /// True quand l'app émet réellement du son (kAudioProcessPropertyIsRunningOutput).
+    /// Permet de filtrer la liste comme le mélangeur Windows.
+    @Published var isPlayingOutput: Bool = false
 
     /// Volume effectif (prend en compte le mute)
     var effectiveVolume: Float {

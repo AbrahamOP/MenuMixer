@@ -21,7 +21,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
 
         if let button = statusItem.button {
-            button.image = NSImage(systemSymbolName: "speaker.wave.3.fill", accessibilityDescription: "Mélangeur de Son")
+            button.image = NSImage(systemSymbolName: "speaker.wave.3.fill", accessibilityDescription: "MenuMixer")
             button.action = #selector(togglePopover)
             button.target = self
         }

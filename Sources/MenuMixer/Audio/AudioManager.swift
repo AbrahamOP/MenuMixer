@@ -32,6 +32,9 @@ class AudioManager: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     /// Cancellables par processus — nettoyés proprement lors du removeProcess
     private var processCancellables: [pid_t: Set<AnyCancellable>] = [:]
+    /// Listeners CoreAudio sur kAudioProcessPropertyIsRunningOutput par pid
+    /// (un processus peut avoir plusieurs audioObjectIDs : app + helpers)
+    private var isRunningListeners: [pid_t: [(AudioObjectID, AudioObjectPropertyListenerBlock)]] = [:]
     private var refreshTimer: Timer?
     private var peakTimer: Timer?
 
@@ -131,9 +134,66 @@ class AudioManager: ObservableObject {
             engine.stop()
             tapManager.removeTap(for: pid)
         }
+        for pid in Array(isRunningListeners.keys) {
+            removeIsRunningListeners(for: pid)
+        }
         engines.removeAll()
         processCancellables.removeAll()
         appStates.removeAll()
+    }
+
+    // MARK: - IsRunningOutput (détection "app qui joue actuellement")
+
+    private func addIsRunningListeners(for state: AppAudioState) {
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyIsRunningOutput,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+
+        let pid = state.pid
+        var listeners: [(AudioObjectID, AudioObjectPropertyListenerBlock)] = []
+
+        for audioObjectID in state.processInfo.audioObjectIDs {
+            let block: AudioObjectPropertyListenerBlock = { [weak self] _, _ in
+                Task { @MainActor [weak self] in
+                    self?.refreshIsPlayingOutput(for: pid)
+                }
+            }
+            let status = AudioObjectAddPropertyListenerBlock(
+                audioObjectID, &address, DispatchQueue.main, block
+            )
+            if status == noErr {
+                listeners.append((audioObjectID, block))
+            }
+        }
+        isRunningListeners[pid] = listeners
+    }
+
+    private func removeIsRunningListeners(for pid: pid_t) {
+        guard let listeners = isRunningListeners[pid] else { return }
+        var address = AudioObjectPropertyAddress(
+            mSelector: kAudioProcessPropertyIsRunningOutput,
+            mScope: kAudioObjectPropertyScopeGlobal,
+            mElement: kAudioObjectPropertyElementMain
+        )
+        for (audioObjectID, block) in listeners {
+            AudioObjectRemovePropertyListenerBlock(
+                audioObjectID, &address, DispatchQueue.main, block
+            )
+        }
+        isRunningListeners.removeValue(forKey: pid)
+    }
+
+    @MainActor
+    private func refreshIsPlayingOutput(for pid: pid_t) {
+        guard let state = appStates.first(where: { $0.pid == pid }) else { return }
+        let anyRunning = state.processInfo.audioObjectIDs.contains { id in
+            AudioProcessInfo.readIsRunningOutput(audioObjectID: id)
+        }
+        if state.isPlayingOutput != anyRunning {
+            state.isPlayingOutput = anyRunning
+        }
     }
 
     func setOutputDevice(for pid: pid_t, deviceID: AudioDeviceID) {
@@ -310,6 +370,12 @@ class AudioManager: ObservableObject {
         appStates.append(state)
         sortAppStates()
 
+        // État initial + listener CoreAudio pour détecter "app qui joue"
+        state.isPlayingOutput = processInfo.audioObjectIDs.contains { id in
+            AudioProcessInfo.readIsRunningOutput(audioObjectID: id)
+        }
+        addIsRunningListeners(for: state)
+
         // Créer le tap seulement si nécessaire (volume != 100% ou muté)
         if needsTap(for: state) {
             setupPipeline(for: state)
@@ -322,6 +388,7 @@ class AudioManager: ObservableObject {
 
     private func removeProcess(pid: pid_t) {
         teardownPipeline(pid: pid)
+        removeIsRunningListeners(for: pid)
         processCancellables.removeValue(forKey: pid)
         appStates.removeAll { $0.pid == pid }
     }

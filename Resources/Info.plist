@@ -23,9 +23,9 @@
     <key>LSUIElement</key>
     <true/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>Mélangeur de Son nécessite l'accès audio pour contrôler le volume des applications individuellement.</string>
+    <string>MenuMixer nécessite l'accès audio pour contrôler le volume des applications individuellement.</string>
     <key>NSAudioCaptureUsageDescription</key>
-    <string>Mélangeur de Son nécessite la capture audio système pour contrôler le volume par application.</string>
+    <string>MenuMixer nécessite la capture audio système pour contrôler le volume par application.</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
 </dict>

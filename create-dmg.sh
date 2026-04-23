@@ -1,22 +1,22 @@
 #!/bin/bash
 set -e
 
-APP_NAME="Mélangeur de Son"
+APP_NAME="MenuMixer"
 DMG_NAME="MenuMixer"
-VERSION="${VERSION:-1.0.0}"
+VERSION="${VERSION:-1.1.0}"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "=== Build Release ==="
-xcodebuild -project "$PROJECT_DIR/MelangeurDeSon.xcodeproj" \
-    -scheme MelangeurDeSon \
+xcodebuild -project "$PROJECT_DIR/MenuMixer.xcodeproj" \
+    -scheme MenuMixer \
     -configuration Release \
     clean build \
     CODE_SIGNING_ALLOWED=NO \
     2>&1 | tail -5
 
 # Trouver le binaire
-BUILD_DIR=$(xcodebuild -project "$PROJECT_DIR/MelangeurDeSon.xcodeproj" \
-    -scheme MelangeurDeSon \
+BUILD_DIR=$(xcodebuild -project "$PROJECT_DIR/MenuMixer.xcodeproj" \
+    -scheme MenuMixer \
     -configuration Release \
     -showBuildSettings 2>/dev/null | grep " BUILT_PRODUCTS_DIR" | awk '{print $3}')
 
@@ -52,7 +52,7 @@ cat > "$DMG_TEMP/Installer.command" <<'INSTALLER_EOF'
 #!/bin/bash
 set -e
 
-APP_NAME="Mélangeur de Son"
+APP_NAME="MenuMixer"
 DMG_DIR="$(cd "$(dirname "$0")" && pwd)"
 SOURCE_APP="$DMG_DIR/$APP_NAME.app"
 TARGET_APP="/Applications/$APP_NAME.app"
@@ -60,7 +60,7 @@ TARGET_APP="/Applications/$APP_NAME.app"
 clear
 cat <<HEADER
 ==============================================
-   Installation de Mélangeur de Son
+        Installation de MenuMixer
 ==============================================
 
 HEADER
@@ -74,17 +74,17 @@ if [ ! -d "$SOURCE_APP" ]; then
 fi
 
 if [ -d "$TARGET_APP" ]; then
-    echo "→ Suppression de l'ancienne version dans /Applications..."
+    echo "-> Suppression de l'ancienne version dans /Applications..."
     rm -rf "$TARGET_APP"
 fi
 
-echo "→ Copie de l'application vers /Applications..."
+echo "-> Copie de l'application vers /Applications..."
 cp -R "$SOURCE_APP" "$TARGET_APP"
 
-echo "→ Retrait du marquage de quarantaine (Gatekeeper)..."
+echo "-> Retrait du marquage de quarantaine (Gatekeeper)..."
 xattr -cr "$TARGET_APP"
 
-echo "→ Lancement de Mélangeur de Son..."
+echo "-> Lancement de MenuMixer..."
 open "$TARGET_APP"
 
 echo ""
@@ -110,7 +110,7 @@ echo "=== DMG créé ==="
 echo "$DMG_OUTPUT"
 echo ""
 echo "Note: sur l'autre Mac, si Gatekeeper bloque, exécuter :"
-echo "  xattr -cr /Applications/Mélangeur\ de\ Son.app"
+echo "  xattr -cr /Applications/MenuMixer.app"
 echo ""
 
 if [ "${CI:-}" != "true" ]; then
