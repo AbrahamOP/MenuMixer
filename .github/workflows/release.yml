@@ -69,25 +69,21 @@ jobs:
           prerelease: false
           generate_release_notes: true
           body: |
-            ## Installation (automatique)
+            ## Installation
 
             1. Télécharge **`${{ steps.dmg.outputs.name }}`** ci-dessous.
-            2. Double-clique le `.dmg` pour l'ouvrir.
-            3. Double-clique sur **`Installer.command`** dans la fenêtre.
-               - Au premier lancement, macOS peut demander confirmation : **clic droit** sur `Installer.command` → **Ouvrir**.
-               - Le script copie l'app dans `/Applications`, retire le flag de quarantaine, et lance MenuMixer.
-            4. Autorise la capture audio au premier clic sur l'icône (indispensable).
+            2. Ouvre le DMG, puis glisse **`MenuMixer.app`** dans le dossier `Applications`.
+            3. Ouvre le **Terminal** (Spotlight → "Terminal") et colle cette ligne :
 
-            ## Installation manuelle (alternative)
+               ```bash
+               xattr -cr /Applications/MenuMixer.app && open /Applications/MenuMixer.app
+               ```
 
-            Glisse l'app dans `/Applications`, puis depuis le Terminal :
-            ```bash
-            xattr -cr "/Applications/MenuMixer.app"
-            ```
+            4. Au premier lancement, autorise la **capture audio** (indispensable pour contrôler le volume par app).
 
-            ## Pourquoi ce script ?
+            ## Pourquoi cette commande ?
 
-            L'app est signée en ad-hoc (gratuit, pas de compte développeur Apple payant). Sans cela, macOS bloque avec le message **« MenuMixer est endommagé »** sur les fichiers téléchargés. Le code source est public et auditable dans ce repo.
+            L'app est signée en **ad-hoc** (signature locale gratuite, pas de compte développeur Apple payant à 99 €/an). Sans notarisation, macOS pose un flag de quarantaine sur tout fichier téléchargé depuis un navigateur et affiche **« MenuMixer est endommagé »**. La commande `xattr -cr` retire ce flag — l'app est saine, le code source est public et auditable dans ce repo.
 
             Voir le [README](https://github.com/${{ github.repository }}#readme) pour plus de détails.
           files: ${{ steps.dmg.outputs.path }}

@@ -3,7 +3,7 @@ set -e
 
 APP_NAME="MenuMixer"
 DMG_NAME="MenuMixer"
-VERSION="${VERSION:-1.1.0}"
+VERSION="${VERSION:-1.1.1}"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "=== Build Release ==="
@@ -47,55 +47,6 @@ mkdir -p "$PROJECT_DIR/build"
 cp -R "$APP_PATH" "$DMG_TEMP/"
 ln -s /Applications "$DMG_TEMP/Applications"
 
-# Script d'installation automatique (contourne Gatekeeper ad-hoc)
-cat > "$DMG_TEMP/Installer.command" <<'INSTALLER_EOF'
-#!/bin/bash
-set -e
-
-APP_NAME="MenuMixer"
-DMG_DIR="$(cd "$(dirname "$0")" && pwd)"
-SOURCE_APP="$DMG_DIR/$APP_NAME.app"
-TARGET_APP="/Applications/$APP_NAME.app"
-
-clear
-cat <<HEADER
-==============================================
-        Installation de MenuMixer
-==============================================
-
-HEADER
-
-if [ ! -d "$SOURCE_APP" ]; then
-    echo "ERREUR : lance ce script depuis le DMG monté."
-    echo "(Impossible de trouver : $SOURCE_APP)"
-    echo ""
-    read -n 1 -s -r -p "Appuie sur une touche pour fermer..."
-    exit 1
-fi
-
-if [ -d "$TARGET_APP" ]; then
-    echo "-> Suppression de l'ancienne version dans /Applications..."
-    rm -rf "$TARGET_APP"
-fi
-
-echo "-> Copie de l'application vers /Applications..."
-cp -R "$SOURCE_APP" "$TARGET_APP"
-
-echo "-> Retrait du marquage de quarantaine (Gatekeeper)..."
-xattr -cr "$TARGET_APP"
-
-echo "-> Lancement de MenuMixer..."
-open "$TARGET_APP"
-
-echo ""
-echo "Installation terminée."
-echo "L'icône haut-parleur apparaît dans la barre des menus."
-echo ""
-read -n 1 -s -r -p "Appuie sur une touche pour fermer..."
-INSTALLER_EOF
-
-chmod +x "$DMG_TEMP/Installer.command"
-
 # Créer le DMG
 hdiutil create -volname "$APP_NAME" \
     -srcfolder "$DMG_TEMP" \
@@ -109,8 +60,10 @@ echo ""
 echo "=== DMG créé ==="
 echo "$DMG_OUTPUT"
 echo ""
-echo "Note: sur l'autre Mac, si Gatekeeper bloque, exécuter :"
-echo "  xattr -cr /Applications/MenuMixer.app"
+echo "Installation sur une autre machine :"
+echo "  1. Glisser MenuMixer.app dans /Applications depuis le DMG"
+echo "  2. Dans Terminal :"
+echo "     xattr -cr /Applications/MenuMixer.app && open /Applications/MenuMixer.app"
 echo ""
 
 if [ "${CI:-}" != "true" ]; then
