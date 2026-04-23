@@ -26,15 +26,36 @@ Contrôle le volume de chaque application individuellement, change de sortie aud
 ### Depuis la dernière release (recommandé)
 
 1. Télécharge le `.dmg` depuis la [page Releases](../../releases/latest).
-2. Ouvre le DMG, glisse **Mélangeur de Son** dans `/Applications`.
-3. Au premier lancement, Gatekeeper peut bloquer l'app (elle est signée ad-hoc, pas via un compte développeur Apple payant). Pour débloquer :
+2. Ouvre le DMG (double-clic sur le fichier `.dmg`). Une fenêtre s'ouvre avec trois éléments :
+   - `Mélangeur de Son.app`
+   - `Applications` (raccourci vers le dossier Applications de macOS)
+   - `Installer.command` (script d'installation automatique)
+3. **Double-clique sur `Installer.command`**. Un Terminal s'ouvre et fait tout à ta place :
+   - Copie l'app dans `/Applications`
+   - Retire le marquage de quarantaine posé par le navigateur (sinon macOS affiche "Mélangeur de Son est endommagé" car l'app est signée ad-hoc et non notarisée)
+   - Lance l'app
+
+   > ⚠️ Au premier double-clic, macOS peut afficher un avertissement du type "Installer.command ne peut pas être ouvert car il provient d'un développeur non identifié". Dans ce cas : **clic droit** sur `Installer.command` → **Ouvrir** → **Ouvrir** dans la boîte de dialogue. macOS retiendra ton choix.
+
+4. L'icône haut-parleur apparaît dans la barre des menus. Clique dessus pour ouvrir le mélangeur.
+5. Au premier usage, macOS demande l'autorisation de capture audio — **accepte-la** (indispensable pour lire/contrôler le volume par app).
+
+### Méthode manuelle (si tu préfères)
+
+Si tu ne veux pas exécuter le script :
+
+1. Glisse `Mélangeur de Son.app` dans `/Applications` depuis le DMG.
+2. Ouvre le Terminal et lance :
 
    ```bash
    xattr -cr "/Applications/Mélangeur de Son.app"
    ```
 
-4. Lance l'app. Une icône haut-parleur apparaît dans la barre des menus.
-5. Autorise l'accès audio au premier clic (macOS demandera la permission de capture audio).
+3. Lance l'app depuis le Launchpad ou Spotlight.
+
+### Pourquoi ces manipulations ?
+
+L'app est signée en **ad-hoc** (signature locale gratuite) et non notarisée par Apple (ça coûte 99 €/an de compte développeur). macOS pose donc un flag de "quarantaine" sur tout fichier téléchargé depuis un navigateur, ce qui combiné à une signature ad-hoc provoque le message "endommagé". Retirer ce flag via `xattr -cr` débloque l'app — elle est parfaitement saine, le code source est public et auditable dans ce repo.
 
 ### Compilation depuis le source
 
