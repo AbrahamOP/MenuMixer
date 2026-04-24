@@ -17,6 +17,8 @@ targets:
     platform: macOS
     sources:
       - Sources/MenuMixer
+      - path: Resources/AppIcon.icns
+        buildPhase: resources
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.menumixer.app

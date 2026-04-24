@@ -17,6 +17,7 @@
 		8A7D630B9B5F9F19ABFB2E68 /* OutputDevicePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EF14D5D664A3E58AFBBF3C4 /* OutputDevicePicker.swift */; };
 		961B39F78E605C077854AF9E /* AudioDeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9714DE093677A0E60695AC1 /* AudioDeviceManager.swift */; };
 		A059D54B5FD415F127D002F6 /* VUMeterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 623120B7F4A28AB5775A103F /* VUMeterView.swift */; };
+		B9FCE013D226972BF81E154C /* AppIcon.icns in Resources */ = {isa = PBXBuildFile; fileRef = C4B4AA200FBF56F2228D80A1 /* AppIcon.icns */; };
 		D0B6123FC033B2F00E77E6DC /* MenuMixerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97DF6B198C45C7C17DE559EF /* MenuMixerApp.swift */; };
 		E4231334A5F428FCC4B18916 /* AudioProcessInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = B47BECDE3AFCD720121925D1 /* AudioProcessInfo.swift */; };
 		E6F4EFACCC7A6C8FF5B2F359 /* AudioManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112B8C61ECC1B427D58202DF /* AudioManager.swift */; };
@@ -35,6 +36,7 @@
 		A0588C4DE87C5A42C1AC4349 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B47BECDE3AFCD720121925D1 /* AudioProcessInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessInfo.swift; sourceTree = "<group>"; };
 		B9714DE093677A0E60695AC1 /* AudioDeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioDeviceManager.swift; sourceTree = "<group>"; };
+		C4B4AA200FBF56F2228D80A1 /* AppIcon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = AppIcon.icns; sourceTree = "<group>"; };
 		CE275D20C4C4AFC66208A338 /* AppVolumeRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVolumeRow.swift; sourceTree = "<group>"; };
 		D949CA9F6EBF2108AD270A73 /* MasterVolumeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MasterVolumeView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,9 +102,18 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		B120A61D23462E45BF887BD1 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C4B4AA200FBF56F2228D80A1 /* AppIcon.icns */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		C89F616C2C3CF1B5BF49FFDF = {
 			isa = PBXGroup;
 			children = (
+				B120A61D23462E45BF887BD1 /* Resources */,
 				33842CE62429B0B710313A64 /* Sources */,
 				A51B7ED7F00F5A7820B266A3 /* Products */,
 			);
@@ -116,6 +127,7 @@
 			buildConfigurationList = 91E5937E892578F71D95A2FC /* Build configuration list for PBXNativeTarget "MenuMixer" */;
 			buildPhases = (
 				06897399BF60E6D30FE94C62 /* Sources */,
+				E6F20252847FAA203D00DB32 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -160,6 +172,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E6F20252847FAA203D00DB32 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B9FCE013D226972BF81E154C /* AppIcon.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		06897399BF60E6D30FE94C62 /* Sources */ = {

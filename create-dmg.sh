@@ -3,7 +3,7 @@ set -e
 
 APP_NAME="MenuMixer"
 DMG_NAME="MenuMixer"
-VERSION="${VERSION:-1.2.0}"
+VERSION="${VERSION:-1.3.0}"
 PROJECT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "=== Build Release ==="
@@ -63,8 +63,14 @@ cp -R "$APP_PATH" "$DMG_STAGING/"
 # Positions : doivent être cohérentes avec Resources/dmg-background.png.
 # Origine Finder = haut-gauche ; le script Swift utilise AppKit (bas-gauche)
 # et positionne la flèche entre les deux icônes à y_finder ≈ 180.
+VOLICON_ARGS=()
+if [ -f "$PROJECT_DIR/Resources/AppIcon.icns" ]; then
+    VOLICON_ARGS=(--volicon "$PROJECT_DIR/Resources/AppIcon.icns")
+fi
+
 create-dmg \
     --volname "$APP_NAME" \
+    "${VOLICON_ARGS[@]}" \
     --background "$BACKGROUND" \
     --window-pos 200 120 \
     --window-size 600 400 \
